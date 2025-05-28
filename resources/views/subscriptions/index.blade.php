@@ -20,24 +20,47 @@
                             {{ session('error') }}
                         </div>
                     @endif
+                    @if (session('info'))
+                        <div class="mb-4 font-medium text-sm text-blue-600 bg-blue-100 border border-blue-400 p-3 rounded">
+                            {{ session('info') }}
+                        </div>
+                    @endif
 
-                    @if ($currentPlan)
+                    {{-- Menampilkan semua paket aktif pengguna --}}
+                    @if (isset($activePlanDetails) && $activePlanDetails->isNotEmpty())
                         <div class="mb-6 p-4 bg-blue-100 border border-blue-300 rounded">
-                            <h3 class="text-lg font-semibold text-blue-700">Paket Anda Saat Ini: {{ $currentPlan->name }}</h3>
-                            @if (Auth::user()->activeSubscription && Auth::user()->activeSubscription->first() && Auth::user()->activeSubscription->first()->ends_at)
-                                <p class="text-sm text-blue-600">
-                                    Akan berakhir pada: {{ Auth::user()->activeSubscription->first()->ends_at->format('d M Y, H:i') }}
-                                </p>
-                            @elseif ($currentPlan->slug !== 'free')
-                                 <p class="text-sm text-blue-600">Status: Aktif</p>
-                            @endif
+                            <h3 class="text-lg font-semibold text-blue-700">Paket Aktif Anda Saat Ini:</h3>
+                            <ul>
+                                @foreach($activePlanDetails as $planId => $details)
+                                    <li class="text-sm text-blue-600">
+                                        <strong>{{ $details['name'] }}</strong> (Rank: {{ $details['rank'] }})
+                                        @if ($details['ends_at'])
+                                            - Akan berakhir pada: {{ \Carbon\Carbon::parse($details['ends_at'])->format('d M Y, H:i') }}
+                                        @else
+                                            - Aktif Selamanya
+                                        @endif
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @else
+                        <div class="mb-6 p-4 bg-yellow-100 border border-yellow-300 rounded">
+                            <h3 class="text-lg font-semibold text-yellow-700">Anda belum memiliki paket aktif.</h3>
                         </div>
                     @endif
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         @foreach ($plans as $plan)
-                            <div class="border p-6 rounded-lg shadow-md @if($currentPlan && $currentPlan->id === $plan->id) bg-indigo-50 border-indigo-300 @endif">
-                                <h3 class="text-2xl font-bold mb-2">{{ $plan->name }}</h3>
+                            @php
+                                $isThisPlanCurrentlyActive = isset($activePlanDetails[$plan->id]);
+                                $buttonText = $isThisPlanCurrentlyActive ? "Perpanjang " . $plan->name : "Pilih Paket " . $plan->name;
+                                $buttonClass = $isThisPlanCurrentlyActive ? "bg-blue-600 hover:bg-blue-700" : "bg-indigo-600 hover:bg-indigo-700";
+                            @endphp
+
+                            <div class="border p-6 rounded-lg shadow-md
+                                @if($isThisPlanCurrentlyActive) bg-indigo-50 border-indigo-300 @endif">
+
+                                <h3 class="text-2xl font-bold mb-2">{{ $plan->name }} (Rank: {{$plan->rank}})</h3>
                                 <p class="text-gray-600 mb-1">{{ $plan->description }}</p>
                                 <p class="text-3xl font-extrabold mb-3">
                                     ${{ number_format($plan->price, 0) }}
@@ -48,38 +71,26 @@
                                     @endif
                                 </p>
                                 <ul class="mb-4 text-sm text-gray-500">
-                                    @if ($plan->slug == 'free')
-                                        <li>✔️ Fitur dasar</li>
-                                    @elseif ($plan->slug == 'basic')
-                                        <li>✔️ Semua fitur free</li>
-                                        <li>✔️ Akses fitur basic</li>
-                                        <li>✔️ Durasi 10 hari</li>
-                                    @elseif ($plan->slug == 'premium')
-                                        <li>✔️ Semua fitur basic</li>
-                                        <li>✔️ Akses fitur premium</li>
-                                        <li>✔️ Durasi 30 hari</li>
+                                    @if ($plan->slug == 'gold')
+                                        <li>✔️ Fitur dasar Gold</li>
+                                    @elseif ($plan->slug == 'platinum')
+                                        <li>✔️ Semua fitur Gold</li>
+                                        <li>✔️ Akses fitur Platinum</li>
+                                    @elseif ($plan->slug == 'diamond')
+                                        <li>✔️ Semua fitur Platinum</li>
+                                        <li>✔️ Akses fitur Diamond</li>
                                         <li>✔️ Dukungan prioritas</li>
                                     @endif
                                 </ul>
 
-                                @if ($currentPlan && $currentPlan->id === $plan->id && (is_null(Auth::user()->activeSubscription->first()->ends_at) || Auth::user()->activeSubscription->first()->ends_at > now()))
-                                     <button class="w-full bg-gray-400 text-white font-bold py-2 px-4 rounded cursor-not-allowed" disabled>
-                                        Paket Aktif
-                                    </button>
-                                @elseif ($plan->slug === 'free' && $currentPlan && $currentPlan->slug !== 'free')
-                                    {{-- Opsi downgrade ke free mungkin perlu logika khusus atau tidak diizinkan --}}
-                                     <button class="w-full bg-gray-300 text-gray-600 font-bold py-2 px-4 rounded cursor-not-allowed" disabled>
-                                        Tidak Tersedia
-                                    </button>
-                                @else
+                               
                                     <form action="{{ route('subscription.store') }}" method="POST">
                                         @csrf
                                         <input type="hidden" name="plan_id" value="{{ $plan->id }}">
-                                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-                                            Pilih Paket {{ $plan->name }}
+                                        <button type="submit" class="w-full {{ $buttonClass }} text-white font-bold py-2 px-4 rounded">
+                                            {{ $buttonText }}
                                         </button>
                                     </form>
-                                @endif
                             </div>
                         @endforeach
                     </div>

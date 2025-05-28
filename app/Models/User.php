@@ -59,25 +59,33 @@ class User extends Authenticatable
         return $this->hasOne(Subscription::class)->where('status', 'active')->latest('ends_at');
     }
 
-    // Helper untuk memeriksa apakah pengguna memiliki langganan aktif untuk plan tertentu
-    public function hasActiveSubscriptionTo(string $planSlug): bool
+    public function activeSubscriptions(): HasMany // Mengembalikan banyak langganan aktif
     {
-        return $this->subscriptions()
+        return $this->hasMany(Subscription::class)
             ->where('status', 'active')
-            ->whereHas('plan', function ($query) use ($planSlug) {
-                $query->where('slug', $planSlug);
-            })
             ->where(function ($query) {
-                $query->whereNull('ends_at') // Untuk paket yang tidak kedaluwarsa
-                    ->orWhere('ends_at', '>', now()); // Atau yang belum kedaluwarsa
+                $query->whereNull('ends_at')
+                    ->orWhere('ends_at', '>', now());
             })
-            ->exists();
+            ->with('plan'); // Eager load plan
     }
 
-    // Helper untuk mendapatkan plan saat ini
-    public function getCurrentPlan(): ?Plan
+    // Method ini mungkin perlu diganti atau disesuaikan dengan kebutuhan Anda
+    // karena pengguna bisa punya >1 plan aktif.
+    // Ini contoh untuk mendapatkan plan dengan rank tertinggi yang aktif.
+    public function getHighestActivePlan(): ?Plan
     {
-        $activeSub = $this->activeSubscription()->first();
-        return $activeSub ? $activeSub->plan : null;
+        $activeSubs = $this->activeSubscriptions; // Menggunakan relasi yang sudah di-eager load jika memungkinkan
+        if ($activeSubs->isEmpty()) {
+            return null;
+        }
+        return $activeSubs->sortByDesc(function ($subscription) {
+            return $subscription->plan ? $subscription->plan->rank : 0;
+        })->first()->plan;
+    }
+
+    public function activityLogs(): HasMany
+    {
+        return $this->hasMany(ActivityLog::class)->orderBy('created_at', 'desc');
     }
 }

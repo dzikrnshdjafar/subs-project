@@ -14,27 +14,30 @@ class PlanSeeder extends Seeder
     public function run(): void
     {
         Plan::create([
-            'name' => 'Free',
-            'slug' => 'free',
+            'name' => 'Gold',
+            'slug' => 'gold',
             'description' => 'Akses dasar ke fitur-fitur utama.',
-            'price' => 0,
-            'duration_days' => null, // Atau bisa juga 9999 jika ingin representasi 'selamanya'
-        ]);
-
-        Plan::create([
-            'name' => 'Basic',
-            'slug' => 'basic',
-            'description' => 'Akses ke fitur basic selama 10 hari.',
-            'price' => 10, // Contoh harga
+            'price' => 10,
             'duration_days' => 10,
+            'rank' => 1, // Tambahkan ini
         ]);
 
         Plan::create([
-            'name' => 'Premium',
-            'slug' => 'premium',
-            'description' => 'Akses penuh ke semua fitur premium selama 30 hari.',
-            'price' => 25, // Contoh harga
+            'name' => 'Platinum',
+            'slug' => 'platinum',
+            'description' => 'Akses ke fitur platinum selama 10 hari.',
+            'price' => 20,
+            'duration_days' => 20,
+            'rank' => 2, // Tambahkan ini
+        ]);
+
+        Plan::create([
+            'name' => 'Diamond',
+            'slug' => 'diamond',
+            'description' => 'Akses penuh ke semua fitur diamond selama 30 hari.',
+            'price' => 25,
             'duration_days' => 30,
+            'rank' => 3, // Tambahkan ini
         ]);
     }
 }

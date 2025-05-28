@@ -16,6 +16,7 @@ class Plan extends Model
         'description',
         'price',
         'duration_days',
+        'rank'
     ];
 
     public function subscriptions(): HasMany

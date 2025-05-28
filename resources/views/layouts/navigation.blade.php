@@ -43,6 +43,11 @@
                             {{ __('Profile') }}
                         </x-dropdown-link>
 
+                        {{-- Tambahkan link ini --}}
+                        <x-dropdown-link :href="route('profile.activity-log')">
+                            {{ __('Log Aktivitas') }}
+                        </x-dropdown-link>
+
                         <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
