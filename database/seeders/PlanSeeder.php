@@ -17,7 +17,7 @@ class PlanSeeder extends Seeder
             'name' => 'Gold',
             'slug' => 'gold',
             'description' => 'Akses dasar ke fitur-fitur utama.',
-            'price' => 10,
+            'price' => 1000,
             'duration_days' => 10,
             'rank' => 1, // Tambahkan ini
         ]);
@@ -26,7 +26,7 @@ class PlanSeeder extends Seeder
             'name' => 'Platinum',
             'slug' => 'platinum',
             'description' => 'Akses ke fitur platinum selama 10 hari.',
-            'price' => 20,
+            'price' => 2000,
             'duration_days' => 20,
             'rank' => 2, // Tambahkan ini
         ]);
@@ -35,7 +35,7 @@ class PlanSeeder extends Seeder
             'name' => 'Diamond',
             'slug' => 'diamond',
             'description' => 'Akses penuh ke semua fitur diamond selama 30 hari.',
-            'price' => 25,
+            'price' => 2500,
             'duration_days' => 30,
             'rank' => 3, // Tambahkan ini
         ]);

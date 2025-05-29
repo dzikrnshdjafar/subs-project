@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'subscribed' => \App\Http\Middleware\CheckSubscription::class,
         ]);
+        $middleware->validateCsrfTokens(except: [
+            '/tripay/callback',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
