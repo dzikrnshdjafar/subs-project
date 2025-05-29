@@ -25,45 +25,47 @@ class SubscriptionController extends Controller
 
     public function index()
     {
-        // ... (method index yang sudah ada, tidak perlu diubah untuk bagian ini)
-        // $paymentChannels dihilangkan dari sini karena akan diambil di halaman checkout
         $plans = Plan::orderBy('rank', 'asc')->get();
-        $user = Auth::user();
-        $activePlanDetails = $user->subscriptions()
-            ->where('status', 'active')
-            ->where(function ($q) {
-                $q->whereNull('ends_at')->orWhere('ends_at', '>', now());
-            })
-            ->with('plan')
-            ->get()
-            ->mapWithKeys(function ($sub) {
-                if ($sub->plan) {
-                    return [$sub->plan_id => [
-                        'name' => $sub->plan->name,
-                        'slug' => $sub->plan->slug,
-                        'rank' => $sub->plan->rank,
-                        'ends_at' => $sub->ends_at
-                    ]];
-                }
-                return [];
-            })->filter();
+        $user = Auth::user(); // Ini akan null jika tidak ada yang login
 
+        $activePlanDetails = collect(); // Default ke collection kosong
         $currentPlan = null;
-        if ($activePlanDetails->isNotEmpty()) {
-            $highestRankPlanId = $user->subscriptions()->where('status', 'active')
+
+        if ($user) { // Hanya jalankan jika user login
+            $activePlanDetails = $user->subscriptions()
+                ->where('status', 'active')
                 ->where(function ($q) {
                     $q->whereNull('ends_at')->orWhere('ends_at', '>', now());
                 })
                 ->with('plan')
                 ->get()
-                ->sortByDesc(function ($sub) {
-                    return $sub->plan ? $sub->plan->rank : 0;
-                })->first()->plan_id ?? null; // Tambah null coalescing operator
-            if ($highestRankPlanId) {
-                $currentPlan = Plan::find($highestRankPlanId);
+                ->mapWithKeys(function ($sub) {
+                    if ($sub->plan) {
+                        return [$sub->plan_id => [
+                            'name' => $sub->plan->name,
+                            'slug' => $sub->plan->slug,
+                            'rank' => $sub->plan->rank,
+                            'ends_at' => $sub->ends_at
+                        ]];
+                    }
+                    return [];
+                })->filter();
+
+            if ($activePlanDetails->isNotEmpty()) {
+                $highestRankPlanId = $user->subscriptions()->where('status', 'active')
+                    ->where(function ($q) {
+                        $q->whereNull('ends_at')->orWhere('ends_at', '>', now());
+                    })
+                    ->with('plan')
+                    ->get()
+                    ->sortByDesc(function ($sub) {
+                        return $sub->plan ? $sub->plan->rank : 0;
+                    })->first()->plan_id ?? null;
+                if ($highestRankPlanId) {
+                    $currentPlan = Plan::find($highestRankPlanId);
+                }
             }
         }
-        // $paymentChannels = $this->tripayService->getPaymentChannels(); // Pindahkan ini ke showCheckoutPage
 
         return view('subscriptions.index', compact('plans', 'currentPlan', 'activePlanDetails'));
     }
