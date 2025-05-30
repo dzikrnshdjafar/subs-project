@@ -13,12 +13,12 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="font-sans text-gray-900 antialiased bg-cream"> {{-- Changed bg-gray-100 to bg-cream --}}
-        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
+        <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 px-6">
             <div>
                 <a href="/">
                     {{-- Neubrutalist Logo attempt --}}
                     <div class="bg-pink p-2 border-3 border-black shadow-neu mb-4">
-                        <span class="font-bold text-2xl">NEOBRU</span> {{-- Or your app name/logo text --}}
+                        <span class="font-bold text-2xl">{{ config('app.name', 'Laravel') }}</span> {{-- Or your app name/logo text --}}
                     </div>
                     {{-- <x-application-logo class="w-20 h-20 fill-current text-gray-500" /> --}}
                 </a>

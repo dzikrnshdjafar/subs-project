@@ -20,6 +20,12 @@ export default {
                 'teal': '#9BE8D8',
                 'blue': '#70E1E8',
                 'white': '#f4f4f4',
+
+                'lime': '#C4F000',        // warna aksen cerah dan edgy
+  'purple': '#C084FC',      // buat variasi yang tetap playful
+  'red': '#FF4D4D',         // aksen tegas, untuk tombol penting/error
+  'green': '#6EEB83',       // alternatif segar dan kontras
+  'gray': '#E0E0E0',        // untuk latar atau elemen minor
                 // Original colors below - keep them or remove if not needed
                 'primary': '#171717',
                 'secondary': '#6ee7b7',

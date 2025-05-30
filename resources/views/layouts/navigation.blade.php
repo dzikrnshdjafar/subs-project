@@ -1,5 +1,5 @@
 {{-- resources/views/layouts/navigation.blade.php --}}
-<nav x-data="{ open: false }" class="px-6 py-4 md:px-12 flex justify-between items-center border-b-3 border-black bg-cream">
+<nav x-data="{ open: false }" class="px-6 py-4 md:px-12 flex justify-between items-center border-b-3 border-black bg-cream sticky top-0">
     <div class="flex items-center">
         <a href="{{ route('home') }}">
             <div class="bg-pink p-2 border-3 border-black shadow-neu">
@@ -13,20 +13,35 @@
             {{ __('Beranda') }}
         </x-nav-link>
 
-        {{-- Link Paket Langganan yang Disesuaikan --}}
+        
+        {{-- Link Fitur yang Disesuaikan --}}
         @if(request()->routeIs('home'))
-    <a href="#subscription-plans-section"
-       class="font-bold hover:underline text-black px-1 pt-1 border-b-2 border-transparent hover:border-gray-400 focus:outline-none focus:border-orange transition duration-150 ease-in-out">
-        {{ __('Paket Langganan') }}
+        <a href="#features-section"
+        class="font-bold hover:underline text-black px-1 pt-1 border-b-2 border-transparent hover:border-gray-400 focus:outline-none transition duration-150 ease-in-out">
+        {{ __('Fitur') }}
     </a>
-@else
-    <a href="{{ route('home') }}#subscription-plans-section"
-       class="font-bold hover:underline text-black px-1 pt-1 border-b-2 border-transparent hover:border-gray-400 focus:outline-none focus:border-orange transition duration-150 ease-in-out">
-        {{ __('Paket Langganan') }}
-    </a>
+    @else
+    <a href="{{ route('home') }}#features-section"
+    class="font-bold hover:underline text-black px-1 pt-1 border-b-2 border-transparent hover:border-gray-400 focus:outline-none transition duration-150 ease-in-out">
+    {{ __('Fitur') }}
+</a>
 @endif
-        {{-- End Link Paket Langganan yang Disesuaikan --}}
+{{-- End Link Fitur yang Disesuaikan --}}
 
+{{-- Link Paket Langganan yang Disesuaikan --}}
+@if(request()->routeIs('home'))
+<a href="#subscription-plans-section"
+class="font-bold hover:underline text-black px-1 pt-1 border-b-2 border-transparent hover:border-gray-400 focus:outline-none transition duration-150 ease-in-out">
+{{ __('Paket Langganan') }}
+</a>
+@else
+<a href="{{ route('home') }}#subscription-plans-section"
+class="font-bold hover:underline text-black px-1 pt-1 border-b-2 border-transparent hover:border-gray-400 focus:outline-none transition duration-150 ease-in-out">
+{{ __('Paket Langganan') }}
+</a>
+@endif
+
+{{-- End Link Paket Langganan yang Disesuaikan --}}
 
         @auth
             <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="font-bold hover:underline text-black">
@@ -37,6 +52,13 @@
 
     <div class="hidden sm:flex sm:items-center sm:ms-6">
         @auth
+
+        <a href="{{ route('dashboard') }}">
+                            <button class="bg-teal px-5 py-2 font-bold text-black border-3 border-black shadow-neu transition-all hover:-translate-y-1 hover:translate-x-1 hover:shadow-neu-lg active:translate-y-1 active:-translate-x-1 active:shadow-neu-sm rounded-md mr-6">
+                                Dashboard
+                            </button>
+                        </a>
+
             <x-dropdown align="right" width="48">
                 <x-slot name="trigger">
                     <button class="bg-orange px-5 py-2 font-bold text-black border-3 border-black shadow-neu transition-all hover:-translate-y-1 hover:translate-x-1 hover:shadow-neu-lg active:translate-y-1 active:-translate-x-1 active:shadow-neu-sm flex items-center rounded-md">
@@ -84,9 +106,11 @@
             </div>
         @endauth
     </div>
+    
 
     <div class="-me-2 flex items-center sm:hidden">
-        <button @click="open = ! open" class="bg-cream p-2 rounded-md text-black focus:outline-none border-3 border-black shadow-neu active:shadow-none">
+        
+        <button @click="open = ! open" class="bg-cream px-2 py-2 font-bold text-black border-3 border-black shadow-neu transition-all hover:-translate-y-1 hover:translate-x-1 hover:shadow-neu-lg active:translate-y-1 active:-translate-x-1 active:shadow-neu-sm rounded-md">
             <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
                 <path :class="{'hidden': open, 'inline-flex': ! open }" class="inline-flex" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 <path :class="{'hidden': ! open, 'inline-flex': open }" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -106,14 +130,14 @@
     {{-- Untuk halaman home (scroll internal) --}}
     <a href="#subscription-plans-section"
        class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-black hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out
-              md:font-bold md:hover:underline md:text-black md:px-1 md:pt-1 md:border-b-2 md:border-transparent md:hover:border-gray-400 md:focus:border-orange">
+              md:font-bold md:hover:underline md:text-black md:px-1 md:pt-1 md:border-b-2 md:border-transparent md:hover:border-gray-400 md">
         {{ __('Paket Langganan') }}
     </a>
 @else
     {{-- Untuk halaman lain (redirect ke home dengan anchor) --}}
     <a href="{{ route('home') }}#subscription-plans-section"
        class="block w-full ps-3 pe-4 py-2 border-l-4 border-transparent text-start text-base font-medium text-black hover:text-gray-800 hover:bg-gray-50 hover:border-gray-300 focus:outline-none focus:text-gray-800 focus:bg-gray-50 focus:border-gray-300 transition duration-150 ease-in-out
-              md:font-bold md:hover:underline md:text-black md:px-1 md:pt-1 md:border-b-2 md:border-transparent md:hover:border-gray-400 md:focus:border-orange">
+              md:font-bold md:hover:underline md:text-black md:px-1 md:pt-1 md:border-b-2 md:border-transparent md:hover:border-gray-400 md">
         {{ __('Paket Langganan') }}
     </a>
 @endif

@@ -16,7 +16,7 @@
             
             @include('layouts.navigation')
 
-            <main class="flex-grow px-6 py-8 md:px-12 md:py-12"> {{-- Added flex-grow --}}
+            <main class="flex-grow "> {{-- Added flex-grow --}}
                 {{ $slot }}
             </main>
 

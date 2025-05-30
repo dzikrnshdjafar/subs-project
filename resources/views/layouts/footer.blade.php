@@ -6,7 +6,7 @@
                 <div class="bg-pink p-2 border-3 border-black shadow-neu inline-block">
                     <span class="font-bold text-xl">{{ config('app.name', 'NEOBRU') }}</span>
                 </div>
-                <p class="mt-4 max-w-xs text-black">Bold design for bold ideas. Your app's tagline here.</p>
+                <p class="mt-4 max-w-xs text-black">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Doloribus, aliquid.</p>
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-3 gap-8">

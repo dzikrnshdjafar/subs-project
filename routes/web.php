@@ -15,8 +15,56 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    $user = Auth::user();
+    $activePlanDetails = collect();
+    $currentPlan = null; // Atau plan default jika tidak ada langganan
+
+    if ($user) {
+        $activePlanDetails = $user->subscriptions()
+            ->where('status', 'active')
+            ->where(function ($q) {
+                $q->whereNull('ends_at')->orWhere('ends_at', '>', now());
+            })
+            ->with('plan')
+            ->get()
+            ->mapWithKeys(function ($sub) {
+                if ($sub->plan) {
+                    return [$sub->plan_id => [
+                        'name' => $sub->plan->name,
+                        'slug' => $sub->plan->slug,
+                        'rank' => $sub->plan->rank,
+                        'ends_at' => $sub->ends_at
+                    ]];
+                }
+                return [];
+            })->filter();
+
+        if ($activePlanDetails->isNotEmpty()) {
+            $highestRankSubscription = $user->subscriptions()
+                ->where('status', 'active')
+                ->where(function ($q) {
+                    $q->whereNull('ends_at')->orWhere('ends_at', '>', now());
+                })
+                ->with('plan')
+                ->get()
+                ->sortByDesc(function ($sub) {
+                    return $sub->plan ? $sub->plan->rank : 0;
+                })->first();
+
+            if ($highestRankSubscription && $highestRankSubscription->plan) {
+                $currentPlan = $highestRankSubscription->plan;
+            }
+        }
+    }
+    // Jika tidak ada paket aktif, Anda mungkin ingin menampilkan info default
+    // atau membiarkan $currentPlan null dan menanganinya di view.
+
+    return view('dashboard', compact('user', 'currentPlan', 'activePlanDetails'));
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/subscription-plans', [SubscriptionController::class, 'index'])->name('subscription.plans');
 Route::middleware('auth')->group(function () {

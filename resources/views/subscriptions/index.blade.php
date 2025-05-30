@@ -1,6 +1,5 @@
-{{-- resources/views/subscriptions/index.blade.php --}}
-
-    <div class="py-12">
+    <div class="max-w-7xl mx-auto px-6">
+    <div class="py-16">
 
             @auth {{-- Tampilkan hanya jika user login --}}
                 @if (isset($activePlanDetails) && $activePlanDetails->isNotEmpty())
@@ -25,14 +24,9 @@
                         <p class="text-black mt-2">Silakan pilih salah satu paket di bawah ini untuk memulai.</p>
                     </div>
                 @endif
-            @else {{-- Tampilkan untuk tamu --}}
-                <div class="mb-6 p-6 bg-yellow border-3 border-black shadow-neu-lg rounded-lg">
-                    <h3 class="text-2xl font-bold text-black">Lihat Paket Kami</h3>
-                    <p class="text-black mt-2">Pilih paket yang paling sesuai dengan kebutuhan Anda. <a href="{{ route('login') }}" class="font-semibold hover:underline text-orange">Login</a> atau <a href="{{ route('register') }}" class="font-semibold hover:underline text-orange">Register</a> untuk berlangganan.</p>
-                </div>
             @endauth
 
-            <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center">Pilih <span class="bg-yellow px-2">Paket Anda</span></h2>
+            <h2 class="text-4xl md:text-5xl font-bold mb-12 text-center">Choose <span class="bg-orange px-2">Your Plan</span></h2>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach ($plans as $plan)
@@ -132,4 +126,5 @@
                     </div>
                 @endforeach
             </div>
+        </div>
         </div>
